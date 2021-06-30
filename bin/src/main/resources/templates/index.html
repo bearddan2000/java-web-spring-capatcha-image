@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Spring Capatcha</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<!-- this is header -->
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">Spring Capatcha</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="main-content" class="container">
+  <div class="row" style="margin-top:20px">
+    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+      <div class="row">
+        <!--
+        <p style="color:green;font-size:18px;" id="provided"/>
+      -->
+        <img src="/image" alt="capatcha image">
+        <p style="display: none;" id="provided-hidden"/>
+      </div>
+      <div class="form-group">
+          <input type="text" id="guess" class="form-control input-lg"
+                 placeholder="Capatcha Guess" required="true" autofocus="true"/>
+      </div>
+
+      <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12">
+              <button class="btn btn-lg btn-primary btn-block">Guess</button>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+          <span/>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+
+<script src="/webjars/jquery/jquery.min.js"></script>
+<script>
+function getInit() {
+  $.get('/capatcha', function (data, textStatus, jqXHR) {
+    var capatcha = $('img').attr('src');
+    var capatcha = $('img').attr('src', capatcha + "/" + data);
+    $('#provided-hidden').text(data);
+  });
+}
+// A $( document ).ready() block.
+$( document ).ready(function() {
+  getInit();
+
+  //hang on event of form with id=myform
+  $("button").click(function(e) {
+    $('span').empty();
+    $('img').attr('src', '/image');
+    $.post('/', {
+       guess: $('#guess').val() || "empty-guess"
+      , provided: $('#provided-hidden').text() || "empty-provided"
+    }, function(data, textStatus, jqXHR) {
+      $('span').text(data);
+      getInit();
+    });
+  });
+});
+</script>
+</body>
+</html>
